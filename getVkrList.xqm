@@ -14,7 +14,8 @@ let $r := http:send-request(
    )[2]//table[1]
    
 let $rows := $r/tbody/tr
-let $prep := distinct-values( $rows/td[2])
+let $prep := sort( distinct-values( $rows/td[2]) )
+let $napr := sort( distinct-values( $rows/td[4]) )
 return 
   <html>
     <body>
@@ -30,22 +31,38 @@ return
         <tr class="text-center">
           <th>#</th>
           <th>Преподаватель</th>
-          <th>Загружено ВКР</th>
+          <th>Загружено ВКР всего</th>
+          {
+            for $n in $napr
+            return
+              <th>{ $n }</th>
+          }
         </tr>
       {
         for $p in $prep
-        order by $p
         count $c
         return
           <tr>
             <td>{ $c }.</td>
             <td>{$p}</td>
-            <td  class="text-center">{ count( $rows[td[2]/text() = $p ] ) } </td>
+            <td  class="text-center">{ count( $rows[td[2]/text() = $p ] ) }</td>
+            {
+              for $n in $napr
+              return
+                <td class="text-center">{  count( $rows[ td[2]/text() = $p and  td[4]/text() = $n ] ) }</td> 
+            }
           </tr> ,
           <tr class="text-center font-bold">
-            <td></td>
-            <td>Всего:</td>
-            <td>{count ( $rows )}</td>
+            <th></th>
+            <th>Всего:</th>
+            <th>{ count ( $rows ) }</th>
+            {
+              for $n in $napr
+              return
+                <th class="text-center">
+                  { count( $rows[ td[4]/text() = $n ] ) }
+                </th> 
+            }
           </tr>
         }</table>
         </div>
