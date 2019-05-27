@@ -14,9 +14,9 @@ let $r := http:send-request(
    )[2]//table[1]
    
 let $rows := $r/tbody/tr
-let $prep := sort( distinct-values( $rows/td[2]) )
-let $napr := sort( distinct-values( $rows/td[4]) )
-return 
+let $prep := sort( distinct-values( $rows/td[ 2 ] ) )
+let $napr := sort( distinct-values( $rows/td[ 5 ] ) )
+let $result := 
   <html>
     <body>
       <div class="container">
@@ -49,7 +49,7 @@ return
             {
               for $n in $napr
               return
-                <td class="text-center">{  count( $rows[ td[2]/text() = $p and  td[4]/text() = $n ] ) }</td> 
+                <td class="text-center">{  count( $rows[ td[2]/text() = $p and  td[5]/text() = $n ] ) }</td>
             }
           </tr> ,
           <tr class="text-center font-bold">
@@ -60,7 +60,7 @@ return
               for $n in $napr
               return
                 <th class="text-center">
-                  { count( $rows[ td[4]/text() = $n ] ) }
+                  { count( $rows[ td[ 5 ]/text() = $n ] ) }
                 </th> 
             }
           </tr>
@@ -70,4 +70,6 @@ return
      </body>
      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"></link>
    </html>
+   
+   return $result
 };
