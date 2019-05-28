@@ -4,8 +4,9 @@ declare
   %rest:path("/ivgpu/monitor/vkr")
   %rest:GET
   %rest:query-param( "sessionid", "{ $sessionid }",  "")
+  %rest:query-param( "year", "{ $year }",  "2018")
   %output:method( "xhtml" )
-function ivgpu:monitor( $sessionid ){
+function ivgpu:monitor( $sessionid as xs:string, $year as xs:string ){
 let $r := http:send-request(
     <http:request method='get'
        href='{ "https://dp.ivgpu.com/teacher/vkr_department" }'>
@@ -13,7 +14,7 @@ let $r := http:send-request(
     </http:request>
    )[2]//table[1]
    
-let $rows := $r/tbody/tr
+let $rows := $r/tbody/tr[ td[7]  = $year ]
 let $prep := sort( distinct-values( $rows/td[ 2 ] ) )
 let $napr := sort( distinct-values( $rows/td[ 5 ] ) )
 let $result := 
@@ -21,7 +22,7 @@ let $result :=
     <body>
       <div class="container">
       <div class="row">
-        <div class="h3">Мониторинг загрузки ВКР кафедры ЭУФ</div>
+        <div class="h3">Мониторинг загрузки ВКР кафедры ЭУФ за { $year }</div>
       </div>
       <div class="row">
         <div class="text-center font-italic">по состоянию на { current-date() }</div>
